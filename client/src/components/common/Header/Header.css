@@ -1,0 +1,231 @@
+.header {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    font-size: var(--font-size-small);
+    background-color: var(--dark-color);
+}
+
+.header_container {
+    max-width: 1240px;
+    padding: 0 16px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+
+/* Left Section */
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--accent-color);
+}
+
+.header__logo svg {
+    width: 150px;
+    height: auto;
+    display: block;
+}
+
+.header__navWrapper {
+    display: flex;
+    align-items: center;
+}
+
+.header__navMenu {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 0;
+}
+
+.header__navMenu li {
+    display: flex;
+    align-items: center;
+}
+
+.header__navMenuItem {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 16px;
+    height: var(--header-height);
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.header__navMenuItem:hover {
+    color: var(--light-color);
+}
+
+/* Middle Section - Search */
+
+.header__middle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+}
+
+.headerSearch {
+    position: relative;
+    width: 350px;
+    display: flex;
+    align-items: center;
+    background-color: var(--background-highlight-color);
+    border-radius: 3px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.headerSearch__input {
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    height: 30px;
+    background: transparent;
+    border: none;
+    color: var(--light-color);
+    outline: none;
+    padding: 0 8px;
+}
+
+.headerSearch__input::placeholder {
+    color: var(--secondary-color);
+}
+
+.headerSearch__submit {
+    background: none;
+    border: none;
+    padding: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    transition: color 0.2s ease;
+}
+
+.headerSearch__submit:hover {
+    color: var(--light-color);
+}
+
+.headerSearch__submit svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Right Section */
+.header__right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: auto;
+}
+
+.header__link {
+    color: var(--light-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--font-primary);
+    font-size: var(--font-size-small);
+}
+
+.header__link:hover {
+    color: var(--accent-color);
+}
+
+.uploadButton {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    background: none;
+    color: var(--light-color);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.uploadButton:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* User Navigation */
+.header__userNav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header__userNavButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.2s ease;
+    background: none;
+    border: none;
+    color: var(--light-color);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-small);
+}
+
+.header__userNavButton:hover {
+    background-color: var(--background-highlight-color);
+}
+
+.header__userNavAvatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--background-highlight-color);
+}
+
+.header__userNavUsernameButtonIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--secondary-color);
+    transition: color 0.2s ease;
+}
+
+.header__userNavButton:hover .header__userNavUsernameButtonIcon {
+    color: var(--light-color);
+}
+
+.header__userNavUsernameButtonIcon svg {
+    width: 100%;
+    height: 100%;
+}

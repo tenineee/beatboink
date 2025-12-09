@@ -1,0 +1,182 @@
+/* Centered Auth Page Layout */
+.auth-page-centered {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+/* Minimal Auth Form */
+.auth-form-minimal {
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Title */
+.auth-title-minimal {
+    font-size: 24px;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: center;
+    color: var(--light-color);
+    padding-bottom: var(--spacing-3x);
+    font-family: var(--font-primary);
+}
+
+/* Form Fields Container */
+.auth-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Individual Field */
+.form-field-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Label */
+.form-label-minimal {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--secondary-color);
+    font-family: var(--font-primary);
+}
+
+/* Input */
+.form-input-minimal {
+    width: 100%;
+    height: 32px;
+    padding: 0 0 12px 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--light-color);
+    font-family: var(--font-primary);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+.form-input-minimal::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-input-minimal:focus {
+    border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+.form-input-minimal:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Submit Button */
+.auth-button-minimal {
+    width: 100%;
+    height: 50px;
+    background: var(--accent-color);
+    color: var(--light-color);
+    border: none;
+    border-radius: 36px;
+    font-family: var(--font-primary);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 16px;
+}
+
+.auth-button-minimal:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.auth-button-minimal:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.auth-button-minimal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Footer Text */
+.auth-footer-minimal {
+    text-align: center;
+    color: var(--light-color);
+    font-size: 14px;
+    margin-top: -16px;
+    font-family: var(--font-primary);
+}
+
+.auth-link-minimal {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.auth-link-minimal:hover {
+    text-decoration: underline;
+}
+
+/* Error Message */
+.auth-error-minimal {
+    padding: 12px 16px;
+    background-color: rgba(255, 59, 48, 0.15);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .auth-page-centered {
+        padding: 16px;
+    }
+
+    .auth-title-minimal {
+        font-size: 28px;
+        margin-bottom: 40px;
+    }
+
+    .auth-form-fields {
+        gap: 28px;
+    }
+
+    .auth-button-minimal {
+        height: 52px;
+        font-size: 16px;
+    }
+}
+
+/* Remove old styles if they conflict */
+.auth-page,
+.auth-container,
+.auth-box,
+.auth-header,
+.auth-title,
+.auth-subtitle,
+.auth-form,
+.form-group,
+.form-label,
+.form-input,
+.auth-button,
+.auth-error,
+.auth-divider,
+.auth-footer,
+.auth-footer-text,
+.auth-link {
+    /* Старые стили можно оставить для совместимости или удалить */
+}

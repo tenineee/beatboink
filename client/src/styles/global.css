@@ -1,0 +1,40 @@
+:root {
+    /* Colors */
+    --accent-color: #FDA026;
+    --accent-color2: #FFB84D;
+    --dark-color: #1a1a1a;
+    --light-color: #ffffff;
+    --secondary-color: #999;
+    --background-surface-color: #121212;
+    --background-highlight-color: #303030;
+
+    /* Spacing */
+    --header-height: 46px;
+    --spacing-1x: 8px;
+    --spacing-2x: 16px;
+    --spacing-3x: 24px;
+
+    /* Typography */
+    --font-primary: 'Montserrat', sans-serif;
+    --font-size-small: 13px;
+    --font-size-base: 14px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+}
