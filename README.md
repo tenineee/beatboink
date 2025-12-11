@@ -1,23 +1,21 @@
-# 🎵 beat.boink - Музыкальный Стриминговый Сервис
-
+# 🎵 beatboink - Музыкальный Стриминговый Сервис
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=w)
 
-Современная платформа для прослушивания и загрузки музыки. Создавай плейлисты, делись треками, открывай новых артистов.
+Платформа для прослушивания и загрузки музыки.
 
-## 📋 Описание
+## Описание
 
-**beat.boink** - это веб-приложение для музыкального стриминга, которое позволяет:
-- 🎧 Слушать музыку онлайн
-- 📤 Загружать свои треки
-- 📝 Создавать плейлисты
-- 👥 Делиться музыкой с друзьями
-- 🎨 Развивать аудиторию для артистов
+**beatboink** - это веб-приложение для музыкального стриминга, которое позволит:
+- Слушать музыку онлайн
+- Загружать свои треки
+- Создавать плейлисты
+- Делиться музыкой
 
-## 🚀 Технологии
+## Технологии
 
 ### Backend
 - **Node.js** - серверная платформа
@@ -36,40 +34,8 @@
 - **Axios** - HTTP клиент
 - **Context API** - управление состоянием
 
-## 📁 Структура проекта
 
-beatmoink/
-├── server/ # Backend приложение
-│ ├── src/
-│ │ ├── config/ # Конфигурация БД
-│ │ ├── controllers/ # Бизнес-логика
-│ │ ├── middleware/ # Промежуточные обработчики
-│ │ ├── routes/ # API маршруты
-│ │ ├── types/ # TypeScript типы
-│ │ ├── utils/ # Утилиты
-│ │ └── server.ts # Точка входа
-│ ├── package.json
-│ └── tsconfig.json
-│
-├── client/ # Frontend приложение
-│ ├── src/
-│ │ ├── assets/ # Статические ресурсы
-│ │ ├── components/ # React компоненты
-│ │ ├── context/ # Context API
-│ │ ├── pages/ # Страницы
-│ │ ├── services/ # API запросы
-│ │ ├── styles/ # Глобальные стили
-│ │ ├── types/ # TypeScript интерфейсы
-│ │ ├── App.tsx
-│ │ └── main.tsx
-│ ├── package.json
-│ └── vite.config.ts
-│
-└── README.md
-
-
-
-## 🛠️ Установка и запуск
+## Установка и запуск
 
 ### Предварительные требования
 
@@ -79,15 +45,18 @@ beatmoink/
 
 ### 1. Клонирование репозитория
 
+`https://github.com/tenineee/beatboink.git`
 
 ### 2. Настройка Backend
 
-- cd server
-- npm install
-
+```
+cd server
+npm install
+```
 
 Создайте файл `.env` в папке `server`:
 
+```env
 DATABASE_USER=your_db_user
 DATABASE_PASSWORD=your_db_password
 DATABASE_HOST=localhost
@@ -96,9 +65,7 @@ DATABASE_NAME=music_streaming
 JWT_SECRET=your_super_secret_key_here
 PORT=5001
 NODE_ENV=development
-
-Создайте базу данных (init.sql)
-
+```
 
 Сервер запустится на `http://localhost:5001`
 
@@ -106,9 +73,10 @@ NODE_ENV=development
 
 Откройте новый терминал:
 
-- `cd client`
-- `npm install`
-
+```
+cd client
+npm install
+```
 
 Создайте файл `.env` в папке `client`:
 
@@ -117,6 +85,8 @@ NODE_ENV=development
 
 Запустите клиент:
 
-- `npm run dev`
+```
+npm run dev
+```
 
 Приложение откроется на `http://localhost:3000`
