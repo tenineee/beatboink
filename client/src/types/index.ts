@@ -19,3 +19,17 @@ export interface AuthContextType {
 export interface AuthResponse {
     token: string;
 }
+
+export interface Track {
+    id: number;
+    title: string;
+    artist: string;
+    album?: string;
+    genre?: string;
+    duration: number;
+    audio_url: string;
+    cover_url?: string;
+    user_id: number;
+    plays_count: number;
+    created_at: string;
+}

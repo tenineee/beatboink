@@ -44,3 +44,25 @@ export const authService = {
     verify: () =>
         api.get('/auth/verify'),
 };
+
+// Track
+export const trackService = {
+    uploadTrack: (formData: FormData) =>
+        api.post('/api/tracks/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }),
+
+    getTracks: (params?: { page?: number; limit?: number; search?: string; genre?: string }) =>
+        api.get('/api/tracks', { params }),
+
+    getTrackById: (id: number | string) =>
+        api.get(`/api/tracks/${id}`),
+
+    deleteTrack: (id: number) =>
+        api.delete(`/api/tracks/${id}`),
+
+    getStreamUrl: (id: number | string) =>
+        `${API_BASE_URL}/api/tracks/${id}/stream`,
+};
