@@ -5,11 +5,13 @@ import { type Track } from '../types';
 import { extractColorsFromImage, updateCSSVariables } from '../utils/colorExtractor';
 import '../styles/TrackPlayerPage.css';
 
+
 const TrackPlayerPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const audioRef = useRef<HTMLAudioElement>(null);
     const coverGlowRef = useRef<HTMLDivElement>(null);
+    const animationFrameRef = useRef<number | null>(null); // ← Новое
 
     const [track, setTrack] = useState<Track | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -22,9 +24,38 @@ const TrackPlayerPage: React.FC = () => {
         dark: '#C67D1F'
     });
 
+    // Плавное обновление прогресс-бара через requestAnimationFrame
+    const updateProgress = () => {
+        if (audioRef.current && isPlaying) {
+            setCurrentTime(audioRef.current.currentTime);
+            animationFrameRef.current = requestAnimationFrame(updateProgress);
+        }
+    };
+
+    // Запуск/остановка анимации при изменении isPlaying
+    useEffect(() => {
+        if (isPlaying) {
+            animationFrameRef.current = requestAnimationFrame(updateProgress);
+        } else {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        }
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [isPlaying]);
+
     useEffect(() => {
         loadTrack();
         return () => {
+            // Очистка при размонтировании
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
             // Восстанавливаем дефолтные цвета при выходе
             document.documentElement.style.setProperty('--accent-color', '#FDA026');
             document.documentElement.style.setProperty('--accent-color-light', '#FFB84D');
@@ -63,12 +94,6 @@ const TrackPlayerPage: React.FC = () => {
                 audioRef.current.play();
             }
             setIsPlaying(!isPlaying);
-        }
-    };
-
-    const handleTimeUpdate = () => {
-        if (audioRef.current) {
-            setCurrentTime(audioRef.current.currentTime);
         }
     };
 
@@ -112,6 +137,13 @@ const TrackPlayerPage: React.FC = () => {
 
     const handleFullscreenExit = () => {
         navigate(-1);
+    };
+
+    const handleEnded = () => {
+        setIsPlaying(false);
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
     };
 
     if (isLoading) {
@@ -272,9 +304,8 @@ const TrackPlayerPage: React.FC = () => {
             <audio
                 ref={audioRef}
                 src={streamUrl}
-                onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
-                onEnded={() => setIsPlaying(false)}
+                onEnded={handleEnded}
             />
         </div>
     );

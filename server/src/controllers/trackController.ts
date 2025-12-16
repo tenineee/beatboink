@@ -5,6 +5,33 @@ import fs from 'fs';
 import path from 'path';
 import { parseFile } from 'music-metadata';
 
+const playCache = new Map<string, number>();
+const PLAY_COOLDOWN = 2 * 60 * 1000; // 5 минут
+
+// Функция для проверки, нужно ли считать прослушивание
+const shouldCountPlay = (trackId: string, clientIp: string): boolean => {
+    const cacheKey = `${trackId}-${clientIp}`;
+    const lastPlay = playCache.get(cacheKey);
+    const now = Date.now();
+
+    if (!lastPlay || (now - lastPlay) > PLAY_COOLDOWN) {
+        playCache.set(cacheKey, now);
+        return true;
+    }
+
+    return false;
+};
+
+// Очистка старых записей каждый час
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, timestamp] of playCache.entries()) {
+        if ((now - timestamp) > PLAY_COOLDOWN) {
+            playCache.delete(key);
+        }
+    }
+}, 60 * 60 * 1000);
+
 export const uploadTrack = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         console.log('📦 Upload request received');
@@ -133,6 +160,7 @@ export const getTrackById = async (req: Request, res: Response): Promise<void> =
 export const streamTrack = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
+        const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
 
         const result = await pool.query('SELECT audio_url FROM tracks WHERE id = $1', [id]);
 
@@ -153,6 +181,8 @@ export const streamTrack = async (req: Request, res: Response): Promise<void> =>
         const fileSize = stat.size;
         const range = req.headers.range;
 
+        let isInitialRequest = false;
+
         if (range) {
             const parts = range.replace(/bytes=/, '').split('-');
             const start = parseInt(parts[0], 10);
@@ -166,9 +196,17 @@ export const streamTrack = async (req: Request, res: Response): Promise<void> =>
                 'Content-Type': 'audio/mpeg',
             };
 
+            // Запрос с начала файла
+            if (start === 0) {
+                isInitialRequest = true;
+            }
+
             res.writeHead(206, head);
             file.pipe(res);
         } else {
+            // Полный файл без Range
+            isInitialRequest = true;
+
             const head = {
                 'Content-Length': fileSize,
                 'Content-Type': 'audio/mpeg',
@@ -177,8 +215,11 @@ export const streamTrack = async (req: Request, res: Response): Promise<void> =>
             fs.createReadStream(filePath).pipe(res);
         }
 
-        // Увеличиваем счетчик прослушиваний
-        await pool.query('UPDATE tracks SET plays_count = plays_count + 1 WHERE id = $1', [id]);
+        // Увеличиваем счетчик с проверкой cooldown
+        if (isInitialRequest && shouldCountPlay(id, clientIp)) {
+            await pool.query('UPDATE tracks SET plays_count = plays_count + 1 WHERE id = $1', [id]);
+            console.log(`▶️ Play counted for track ${id} from ${clientIp}`);
+        }
     } catch (err) {
         console.error('Stream track error:', err);
         res.status(500).json({ error: 'Ошибка стриминга трека' });
