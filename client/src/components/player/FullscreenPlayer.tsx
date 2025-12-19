@@ -1,41 +1,48 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { trackService } from '../services/api';
-import { type Track } from '../types';
-import { extractColorsFromImage, updateCSSVariables } from '../utils/colorExtractor';
-import '../styles/TrackPlayerPage.css';
+import { usePlayer } from '../../context/PlayerContext';
+import { useState, useRef, useEffect } from 'react';
+import { extractColorsFromImage, updateCSSVariables } from '../../utils/colorExtractor';
+import '../../styles/TrackPlayerPage.css';
 
-const TrackPlayerPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const coverGlowRef = useRef<HTMLDivElement>(null);
-    const animationFrameRef = useRef<number | null>(null);
-    const volumeMenuRef = useRef<HTMLDivElement>(null); // ← Новое
+const FullscreenPlayer: React.FC = () => {
+    const {
+        currentTrack,
+        isPlaying,
+        currentTime,
+        duration,
+        volume,
+        isRepeat,
+        isFullscreen,
+        togglePlay,
+        nextTrack,
+        previousTrack,
+        seekTo,
+        setVolume,
+        toggleRepeat,
+        toggleFullscreen,
+    } = usePlayer();
 
-    const [track, setTrack] = useState<Track | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const [volume, setVolume] = useState(1); // ← Новое (0-1)
-    const [showVolumeMenu, setShowVolumeMenu] = useState(false); // ← Новое
-    const [isRepeat, setIsRepeat] = useState(false); // ← Новое
+    const [showVolumeMenu, setShowVolumeMenu] = useState(false);
     const [coverColors, setCoverColors] = useState({
         vibrant: '#FDA026',
         light: '#FFB84D',
         dark: '#C67D1F'
     });
+    const volumeMenuRef = useRef<HTMLDivElement>(null);
 
-    // Плавное обновление прогресс-бара
-    const updateProgress = () => {
-        if (audioRef.current && isPlaying) {
-            setCurrentTime(audioRef.current.currentTime);
-            animationFrameRef.current = requestAnimationFrame(updateProgress);
+    // Извлечение цветов из обложки
+    useEffect(() => {
+        if (currentTrack?.cover_url) {
+            const coverUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${currentTrack.cover_url}`;
+            extractColorsFromImage(coverUrl)
+                .then(colors => {
+                    setCoverColors(colors);
+                    updateCSSVariables(colors);
+                })
+                .catch(err => console.error('Failed to extract colors:', err));
         }
-    };
+    }, [currentTrack]);
 
-    // Закрытие меню громкости при клике вне его
+    // Закрытие меню громкости
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (volumeMenuRef.current && !volumeMenuRef.current.contains(event.target as Node)) {
@@ -52,167 +59,49 @@ const TrackPlayerPage: React.FC = () => {
         };
     }, [showVolumeMenu]);
 
-    // Установка громкости при монтировании
+    // Блокировка скролла
     useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
-        }
-    }, [volume]);
-
-    useEffect(() => {
-        if (isPlaying) {
-            animationFrameRef.current = requestAnimationFrame(updateProgress);
+        if (isFullscreen) {
+            document.body.style.overflow = 'hidden';
         } else {
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-            }
+            document.body.style.overflow = '';
         }
 
         return () => {
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-            }
+            document.body.style.overflow = '';
         };
-    }, [isPlaying]);
+    }, [isFullscreen]);
 
-    useEffect(() => {
-        loadTrack();
-        return () => {
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-            }
-            document.documentElement.style.setProperty('--accent-color', '#FDA026');
-            document.documentElement.style.setProperty('--accent-color-light', '#FFB84D');
-            document.documentElement.style.setProperty('--accent-color-dark', '#FFB84D');
-        };
-    }, [id]);
+    if (!isFullscreen || !currentTrack) return null;
 
-    const loadTrack = async () => {
-        try {
-            const response = await trackService.getTrackById(id!);
-            setTrack(response.data);
-            setIsLoading(false);
+    const coverUrl = currentTrack.cover_url
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${currentTrack.cover_url}`
+        : '';
 
-            if (response.data.cover_url) {
-                const coverUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${response.data.cover_url}`;
-                try {
-                    const colors = await extractColorsFromImage(coverUrl);
-                    setCoverColors(colors);
-                    updateCSSVariables(colors);
-                } catch (err) {
-                    console.error('Failed to extract colors:', err);
-                }
-            }
-        } catch (err) {
-            console.error('Error loading track:', err);
-            setIsLoading(false);
-        }
-    };
-
-    const togglePlay = () => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.pause();
-            } else {
-                audioRef.current.play();
-            }
-            setIsPlaying(!isPlaying);
-        }
-    };
-
-    const handleLoadedMetadata = () => {
-        if (audioRef.current) {
-            setDuration(audioRef.current.duration);
-            audioRef.current.volume = volume;
-        }
-    };
-
-    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const time = Number(e.target.value);
-        setCurrentTime(time);
-        if (audioRef.current) {
-            audioRef.current.currentTime = time;
-        }
-    };
-
-    // ← Новая функция: изменение громкости
-    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newVolume = Number(e.target.value);
-        setVolume(newVolume);
-        if (audioRef.current) {
-            audioRef.current.volume = newVolume;
-        }
-    };
-
-    // ← Новая функция: переключение меню громкости
-    const toggleVolumeMenu = () => {
-        setShowVolumeMenu(!showVolumeMenu);
-    };
-
-    // ← Новая функция: переключение повтора
-    const toggleRepeat = () => {
-        const newRepeat = !isRepeat;
-        setIsRepeat(newRepeat);
-        if (audioRef.current) {
-            audioRef.current.loop = newRepeat;
-        }
-    };
+    const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
     const formatTime = (seconds: number): string => {
+        if (isNaN(seconds)) return '0:00';
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const handlePrevious = () => {
-        console.log('Previous track');
-    };
-
-    const handleNext = () => {
-        console.log('Next track');
-    };
-
-    const toggleLike = () => {
-        console.log('Toggle like');
-    };
-
-    const handleFullscreenExit = () => {
-        navigate(-1);
-    };
-
-    const handleEnded = () => {
-        setIsPlaying(false);
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
+    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const time = Number(e.target.value);
+        if (!isNaN(time)) {
+            seekTo(time);
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="track-player-page">
-                <div className="player-loading">Загрузка...</div>
-            </div>
-        );
-    }
-
-    if (!track) {
-        return (
-            <div className="track-player-page">
-                <div className="player-loading">Трек не найден</div>
-            </div>
-        );
-    }
-
-    const streamUrl = trackService.getStreamUrl(track.id);
-    const coverUrl = track.cover_url
-        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${track.cover_url}`
-        : '';
-
-    const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setVolume(Number(e.target.value));
+    };
 
     return (
         <div className="track-player-page">
-            <button className="player-exit-btn" onClick={handleFullscreenExit}>
+            {/* Exit button */}
+            <button className="player-exit-btn" onClick={toggleFullscreen}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path
                         d="M5 16H8V19H10V14H5V16ZM8 8H5V10H10V5H8V8ZM14 19H16V16H19V14H14V19ZM16 8V5H14V10H19V8H16Z"
@@ -222,10 +111,10 @@ const TrackPlayerPage: React.FC = () => {
             </button>
 
             <div className="player-content">
+                {/* Cover with glow */}
                 <div className="player-cover-wrapper">
                     <div
                         className="player-cover-glow"
-                        ref={coverGlowRef}
                         style={{
                             background: coverUrl
                                 ? `url(${coverUrl})`
@@ -237,7 +126,7 @@ const TrackPlayerPage: React.FC = () => {
 
                     <div className="player-cover">
                         {coverUrl ? (
-                            <img src={coverUrl} alt={track.title} />
+                            <img src={coverUrl} alt={currentTrack.title} />
                         ) : (
                             <div className="player-cover-placeholder">
                                 <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
@@ -251,17 +140,19 @@ const TrackPlayerPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Track info */}
                 <div className="player-info">
-                    <h1 className="player-title">{track.title}</h1>
-                    <p className="player-artist">{track.artist}</p>
+                    <h1 className="player-title">{currentTrack.title}</h1>
+                    <p className="player-artist">{currentTrack.artist}</p>
                 </div>
 
+                {/* Progress bar */}
                 <div className="player-progress-section">
                     <input
                         type="range"
                         min="0"
                         max={duration || 0}
-                        value={currentTime}
+                        value={currentTime || 0}
                         onChange={handleSeek}
                         className="player-progress-bar"
                         style={{
@@ -274,6 +165,7 @@ const TrackPlayerPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Controls */}
                 <div className="player-controls">
                     <button className="player-btn player-btn-secondary">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -281,11 +173,9 @@ const TrackPlayerPage: React.FC = () => {
                         </svg>
                     </button>
 
-                    {/* Кнопка повтора с индикацией активности */}
                     <button
                         className={`player-btn player-btn-secondary ${isRepeat ? 'active' : ''}`}
                         onClick={toggleRepeat}
-                        title={isRepeat ? 'Отключить повтор' : 'Включить повтор'}
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
@@ -295,7 +185,7 @@ const TrackPlayerPage: React.FC = () => {
                         </svg>
                     </button>
 
-                    <button className="player-btn player-btn-secondary" onClick={handlePrevious}>
+                    <button className="player-btn player-btn-secondary" onClick={previousTrack}>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M6 6H8V18H6V6ZM9.5 12L18 6V18L9.5 12Z" fill="currentColor" />
                         </svg>
@@ -313,13 +203,13 @@ const TrackPlayerPage: React.FC = () => {
                         )}
                     </button>
 
-                    <button className="player-btn player-btn-secondary" onClick={handleNext}>
+                    <button className="player-btn player-btn-secondary" onClick={nextTrack}>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M6 18L14.5 12L6 6V18ZM16 6H18V18H16V6Z" fill="currentColor" />
                         </svg>
                     </button>
 
-                    <button className="player-btn player-btn-secondary" onClick={toggleLike}>
+                    <button className="player-btn player-btn-secondary">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
@@ -328,12 +218,10 @@ const TrackPlayerPage: React.FC = () => {
                         </svg>
                     </button>
 
-                    {/* Кнопка громкости с всплывающим меню */}
                     <div className="player-volume-wrapper" ref={volumeMenuRef}>
                         <button
                             className="player-btn player-btn-secondary"
-                            onClick={toggleVolumeMenu}
-                            title="Громкость"
+                            onClick={() => setShowVolumeMenu(!showVolumeMenu)}
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path
@@ -343,13 +231,12 @@ const TrackPlayerPage: React.FC = () => {
                             </svg>
                         </button>
 
-                        {/* Всплывающий ползунок громкости */}
                         {showVolumeMenu && (
                             <div className="player-volume-menu">
                                 <div className="volume-icon">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                         <path
-                                            d="M3 9V15H7L12 20V4L7 9H3ZM16.5 12C16.5 10.23 15.48 8.71 14 7.97V16.02C15.48 15.29 16.5 13.77 16.5 12ZM14 3.23V5.29C16.89 6.15 19 8.83 19 12C19 15.17 16.89 17.85 14 18.71V20.77C18.01 19.86 21 16.28 21 12C21 7.72 18.01 4.14 14 3.23Z"
+                                            d="M3 9V15H7L12 20V4L7 9H3ZM16.5 12C16.5 10.23 15.48 8.71 14 7.97V16.02C15.48 15.29 16.5 13.77 16.5 12Z"
                                             fill="currentColor"
                                         />
                                     </svg>
@@ -372,16 +259,8 @@ const TrackPlayerPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            <audio
-                ref={audioRef}
-                src={streamUrl}
-                onLoadedMetadata={handleLoadedMetadata}
-                onEnded={handleEnded}
-                loop={isRepeat}
-            />
         </div>
     );
 };
 
-export default TrackPlayerPage;
+export default FullscreenPlayer;

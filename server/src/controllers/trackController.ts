@@ -169,8 +169,11 @@ export const streamTrack = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        const audioUrl = result.rows[0].audio_url;
-        const filePath = path.join(__dirname, '../../', audioUrl);
+        const audioUrl = result.rows[0].audio_url as string;
+        const relative = audioUrl.replace(/^\/+/, '');
+        const filePath = path.join(process.cwd(), relative);
+        console.log('streamTrack audioUrl:', audioUrl);
+        console.log('streamTrack filePath:', filePath);
 
         if (!fs.existsSync(filePath)) {
             res.status(404).json({ error: 'Аудио файл не найден' });
@@ -218,7 +221,7 @@ export const streamTrack = async (req: Request, res: Response): Promise<void> =>
         // Увеличиваем счетчик с проверкой cooldown
         if (isInitialRequest && shouldCountPlay(id, clientIp)) {
             await pool.query('UPDATE tracks SET plays_count = plays_count + 1 WHERE id = $1', [id]);
-            console.log(`▶️ Play counted for track ${id} from ${clientIp}`);
+            console.log(`Засчитано прослушивание трека ${id}. Клиент: ${clientIp}`);
         }
     } catch (err) {
         console.error('Stream track error:', err);
@@ -260,7 +263,7 @@ export const deleteTrack = async (req: AuthRequest, res: Response): Promise<void
 
         res.json({ message: 'Трек удален' });
     } catch (err) {
-        console.error('Delete track error:', err);
+        console.error('Ошибка удаления трека:', err);
         res.status(500).json({ error: 'Ошибка удаления трека' });
     }
 };

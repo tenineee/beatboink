@@ -1,15 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 import { trackService } from '../services/api';
 import { type Track } from '../types';
-import { TrackCard } from '../components/track/TrackCard';
 import '../styles/HomePage.css';
 
+
+import { usePlayer } from '../context/PlayerContext';
+import { TrackRow } from '../components/track/TrackRow';
+
 const HomePage: React.FC = () => {
-    const { user, isAuthenticated, isLoading } = useAuth();
-    const [tracks, setTracks] = useState<Track[]>([]);
-    const [tracksLoading, setTracksLoading] = useState(true);
+    const { isAuthenticated } = useAuth();
+    const { playPlaylist } = usePlayer();
+    const [recentTracks, setRecentTracks] = useState<Track[]>([]);
+    const [editorTracks, setEditorTracks] = useState<Track[]>([]);
+    const [favoriteTracks, setFavoriteTracks] = useState<Track[]>([]);
+    const [historyTracks, setHistoryTracks] = useState<Track[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const recentScrollRef = useRef<HTMLDivElement>(null);
+    const editorScrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         loadTracks();
@@ -17,189 +26,213 @@ const HomePage: React.FC = () => {
 
     const loadTracks = async () => {
         try {
-            const response = await trackService.getTracks({ limit: 12 });
-            setTracks(response.data);
+            const response = await trackService.getTracks({ limit: 20 });
+            const tracks = response.data;
+
+            // Разделяем треки на разные категории
+            setRecentTracks(tracks.slice(0, 10));
+            setEditorTracks(tracks.slice(5, 15));
+            setFavoriteTracks(tracks.slice(2, 8));
+            setHistoryTracks(tracks.slice(0, 5));
         } catch (err) {
             console.error('Error loading tracks:', err);
         } finally {
-            setTracksLoading(false);
+            setLoading(false);
         }
     };
 
-    if (isLoading) {
+    const handleTrackClick = (tracks: Track[], index: number) => {
+        playPlaylist(tracks, index);
+    };
+
+    const scroll = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
+        if (ref.current) {
+            const scrollAmount = direction === 'left' ? -400 : 400;
+            ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
+    if (loading) {
         return (
             <div className="home-page">
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: 'calc(100vh - var(--header-height))',
-                    color: 'var(--light-color)'
-                }}>
-                    Загрузка...
-                </div>
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) {
-        return (
-            <div className="home-page">
-                <div className="home-hero">
-                    <div className="hero-content">
-                        <h1 className="hero-title">
-                            Слушай музыку. <br />
-                            Делись треками. <br />
-                            <span className="hero-highlight">Открывай новое.</span>
-                        </h1>
-                        <p className="hero-subtitle">
-                            Присоединяйся к сообществу музыкантов и слушателей
-                        </p>
-                        <div className="hero-actions">
-                            <Link to="/register" className="btn-hero-primary">
-                                Начать бесплатно
-                            </Link>
-                            <Link to="/login" className="btn-hero-secondary">
-                                Войти
-                            </Link>
-                        </div>
-                    </div>
-                    <div className="hero-illustration">
-                        <div className="floating-card card-1">🎵</div>
-                        <div className="floating-card card-2">🎸</div>
-                        <div className="floating-card card-3">🎹</div>
-                        <div className="floating-card card-4">🎧</div>
-                    </div>
-                </div>
-
-                <div className="features-section">
-                    <h2 className="section-title">Почему beat.boink?</h2>
-                    <div className="features-grid">
-                        <div className="feature-card">
-                            <div className="feature-icon">🎵</div>
-                            <h3>Безлимитная библиотека</h3>
-                            <p>Загружай и слушай музыку без ограничений</p>
-                        </div>
-                        <div className="feature-card">
-                            <div className="feature-icon">👥</div>
-                            <h3>Сообщество</h3>
-                            <p>Находи единомышленников и делись музыкой</p>
-                        </div>
-                        <div className="feature-card">
-                            <div className="feature-icon">🎨</div>
-                            <h3>Для артистов</h3>
-                            <p>Загружай свои треки и развивай аудиторию</p>
-                        </div>
-                        <div className="feature-card">
-                            <div className="feature-icon">📱</div>
-                            <h3>Везде с тобой</h3>
-                            <p>Слушай музыку на любых устройствах</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Последние треки для всех */}
-                {tracks.length > 0 && (
-                    <div className="tracks-section">
-                        <h2 className="section-title">Популярные треки</h2>
-                        <div className="tracks-grid">
-                            {tracks.map((track) => (
-                                <TrackCard key={track.id} track={track} />
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <div className="loading">Загрузка...</div>
             </div>
         );
     }
 
     return (
         <div className="home-page">
-            <div className="home-header">
-                <h1>Привет, {user?.username}! 👋</h1>
-                <p className="home-subtitle">Добро пожаловать обратно</p>
-            </div>
-
-            {/* Последние треки */}
-            <div className="content-section">
+            {/* Прослушано недавно */}
+            <section className="track-section">
                 <div className="section-header">
-                    <h3>Последние загрузки</h3>
-                    <Link to="/tracks" className="section-link">
-                        Показать все
-                    </Link>
+                    <h2 className="section-title">Прослушано недавно</h2>
+                    <div className="section-controls">
+                        <button
+                            className="scroll-btn"
+                            onClick={() => scroll(recentScrollRef, 'left')}
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <button
+                            className="scroll-btn"
+                            onClick={() => scroll(recentScrollRef, 'right')}
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+                <div className="tracks-scroll" ref={recentScrollRef}>
+                    {recentTracks.map((track, index) => (
+                        <TrackRow
+                            key={track.id}
+                            track={track}
+                            onClick={() => handleTrackClick(recentTracks, index)}
+                        />
+                    ))}
+                </div>
+            </section>
 
-                {tracksLoading ? (
-                    <div className="tracks-loading">Загрузка треков...</div>
-                ) : tracks.length > 0 ? (
-                    <div className="tracks-grid">
-                        {tracks.map((track) => (
-                            <TrackCard key={track.id} track={track} />
-                        ))}
+            {/* Выбор редакции */}
+            <section className="track-section">
+                <div className="section-header">
+                    <h2 className="section-title">Выбор редакции</h2>
+                    <div className="section-controls">
+                        <button
+                            className="scroll-btn"
+                            onClick={() => scroll(editorScrollRef, 'left')}
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
+                            </svg>
+                        </button>
+                        <button
+                            className="scroll-btn"
+                            onClick={() => scroll(editorScrollRef, 'right')}
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
+                            </svg>
+                        </button>
                     </div>
-                ) : (
-                    <div className="tracks-empty">
-                        <p>Пока нет загруженных треков</p>
-                        <Link to="/upload" className="btn-upload">
-                            Загрузить первый трек
-                        </Link>
-                    </div>
-                )}
-            </div>
+                </div>
+                <div className="tracks-scroll" ref={editorScrollRef}>
+                    {editorTracks.map((track, index) => (
+                        <TrackRow
+                            key={track.id}
+                            track={track}
+                            onClick={() => handleTrackClick(editorTracks, index)}
+                        />
+                    ))}
+                </div>
+            </section>
 
-            {/* Статистика профиля */}
-            <div className="profile-section">
-                <div className="profile-card">
-                    <div className="profile-avatar">
-                        {user?.avatar_url ? (
-                            <img src={user.avatar_url} alt={user.username} />
-                        ) : (
-                            <div className="profile-avatar-placeholder">
-                                {user?.username?.charAt(0).toUpperCase()}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="profile-info">
-                        <h2>{user?.username}</h2>
-                        <p className="profile-email">{user?.email}</p>
-
-                        <div className="profile-badges">
-                            {user?.is_artist && (
-                                <span className="badge badge-artist">
-                  🎵 Артист
-                </span>
-                            )}
-                            <span className="badge badge-member">
-                Участник с {new Date(user?.created_at || '').toLocaleDateString('ru-RU', {
-                                year: 'numeric',
-                                month: 'long'
-                            })}
-              </span>
+            {/* Боковая панель с избранным и историей (только для авторизованных) */}
+            {isAuthenticated && (
+                <aside className="sidebar-sections">
+                    {/* Любимые треки */}
+                    <section className="sidebar-section">
+                        <h3 className="sidebar-title">Любимые треки</h3>
+                        <div className="sidebar-tracks">
+                            {favoriteTracks.map((track, index) => (
+                                <div
+                                    key={track.id}
+                                    className="sidebar-track"
+                                    onClick={() => handleTrackClick(favoriteTracks, index)}
+                                >
+                                    <div className="sidebar-track-cover">
+                                        {track.cover_url ? (
+                                            <img
+                                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${track.cover_url}`}
+                                                alt={track.title}
+                                            />
+                                        ) : (
+                                            <div className="sidebar-track-placeholder">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                    <path
+                                                        d="M12 3V13.55C11.41 13.21 10.73 13 10 13C7.79 13 6 14.79 6 17C6 19.21 7.79 21 10 21C12.21 21 14 19.21 14 17V7H18V3H12Z"
+                                                        fill="currentColor"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="sidebar-track-info">
+                                        <div className="sidebar-track-title">{track.title}</div>
+                                        <div className="sidebar-track-artist">{track.artist}</div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </div>
-                </div>
+                    </section>
 
-                <div className="stats-grid">
-                    <div className="stat-card">
-                        <div className="stat-icon">🎵</div>
-                        <div className="stat-value">{tracks.filter(t => t.user_id === user?.id).length}</div>
-                        <div className="stat-label">Моих треков</div>
-                    </div>
+                    {/* Любимые артисты */}
+                    <section className="sidebar-section">
+                        <h3 className="sidebar-title">Любимые артисты</h3>
+                        <div className="sidebar-tracks">
+                            {favoriteTracks.slice(0, 3).map((track) => (
+                                <div key={track.id} className="sidebar-artist">
+                                    <div className="sidebar-artist-avatar">
+                                        {track.cover_url ? (
+                                            <img
+                                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${track.cover_url}`}
+                                                alt={track.artist}
+                                            />
+                                        ) : (
+                                            <div className="sidebar-artist-placeholder">
+                                                {track.artist.charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="sidebar-artist-info">
+                                        <div className="sidebar-artist-name">{track.artist}</div>
+                                        <div className="sidebar-artist-meta">🎵 Артист</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
 
-                    <div className="stat-card">
-                        <div className="stat-icon">📝</div>
-                        <div className="stat-value">0</div>
-                        <div className="stat-label">Плейлистов</div>
-                    </div>
-
-                    <div className="stat-card">
-                        <div className="stat-icon">⏱️</div>
-                        <div className="stat-value">0ч</div>
-                        <div className="stat-label">Прослушано</div>
-                    </div>
-                </div>
-            </div>
+                    {/* История прослушиваний */}
+                    <section className="sidebar-section">
+                        <h3 className="sidebar-title">История прослушиваний</h3>
+                        <div className="sidebar-tracks">
+                            {historyTracks.map((track, index) => (
+                                <div
+                                    key={track.id}
+                                    className="sidebar-track"
+                                    onClick={() => handleTrackClick(historyTracks, index)}
+                                >
+                                    <div className="sidebar-track-cover">
+                                        {track.cover_url ? (
+                                            <img
+                                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${track.cover_url}`}
+                                                alt={track.title}
+                                            />
+                                        ) : (
+                                            <div className="sidebar-track-placeholder">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                    <path
+                                                        d="M12 3V13.55C11.41 13.21 10.73 13 10 13C7.79 13 6 14.79 6 17C6 19.21 7.79 21 10 21C12.21 21 14 19.21 14 17V7H18V3H12Z"
+                                                        fill="currentColor"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="sidebar-track-info">
+                                        <div className="sidebar-track-title">{track.title}</div>
+                                        <div className="sidebar-track-artist">{track.artist}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </aside>
+            )}
         </div>
     );
 };

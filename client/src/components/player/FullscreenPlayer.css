@@ -1,0 +1,22 @@
+/* Импортируем стили из TrackPlayerPage */
+@import '../../styles/TrackPlayerPage.css';
+
+/* Дополнительные стили для overlay */
+.track-player-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

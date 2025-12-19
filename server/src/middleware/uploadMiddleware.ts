@@ -12,9 +12,9 @@ const createDirs = () => {
     [uploadDir, tracksDir, coversDir].forEach(dir => {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
-            console.log(`📁 Created directory: ${dir}`);
+            console.log(`Создана директория: ${dir}`);
         } else {
-            console.log(`✅ Directory exists: ${dir}`);
+            console.log(`Директория загрузок: ${dir}`);
         }
     });
 };
@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
             targetDir = uploadDir;
         }
 
-        console.log(`📤 Uploading ${file.fieldname} to: ${targetDir}`);
+        console.log(`Загрузка ${file.fieldname} ---> ${targetDir}`);
         cb(null, targetDir);
     },
     filename: (req, file, cb) => {
@@ -43,21 +43,21 @@ const storage = multer.diskStorage({
         const prefix = file.fieldname === 'audio' ? 'track' : 'cover';
         const filename = `${prefix}-${uniqueSuffix}${ext}`;
 
-        console.log(`📝 Saving file as: ${filename}`);
+        console.log(`Файл сохранен: ${filename}`);
         cb(null, filename);
     }
 });
 
-// Фильтры
+
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    console.log(`🔍 Checking file: ${file.fieldname} - ${file.originalname} (${file.mimetype})`);
+    console.log(`Проверка файлов: ${file.fieldname} - ${file.originalname} (${file.mimetype})`);
 
     if (file.fieldname === 'audio') {
         const allowedMimes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/x-wav', 'audio/flac'];
         if (allowedMimes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Разрешены только аудио файлы (MP3, WAV, OGG)'));
+            cb(new Error('Разрешены только аудио файлы (MP3, WAV, OGG, FLAC)'));
         }
     } else if (file.fieldname === 'cover') {
         const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -76,7 +76,7 @@ export const uploadTrackWithCover = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 50 * 1024 * 1024, // 50MB
+        fileSize: 70 * 1024 * 1024, // 50MB
     }
 }).fields([
     { name: 'audio', maxCount: 1 },

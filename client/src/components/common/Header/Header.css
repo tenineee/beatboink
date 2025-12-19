@@ -31,9 +31,11 @@
 
 .header__logo {
     display: flex;
+    margin-top:-7px;
     align-items: center;
     text-decoration: none;
     color: var(--accent-color);
+    transition: color 1.3s ease-in-out;
 }
 
 .header__logo svg {

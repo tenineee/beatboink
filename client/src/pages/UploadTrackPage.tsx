@@ -1,12 +1,14 @@
-import { useState, type FormEvent, useRef } from 'react';
+import {useState, type FormEvent, useRef, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trackService } from '../services/api';
+import { useAuth} from "../context/AuthContext.tsx";
 import '../styles/UploadTrackPage.css';
 
 const UploadTrackPage: React.FC = () => {
     const navigate = useNavigate();
     const coverInputRef = useRef<HTMLInputElement>(null);
     const audioInputRef = useRef<HTMLInputElement>(null);
+    const { user } = useAuth();
 
     const [formData, setFormData] = useState({
         title: '',
@@ -14,6 +16,12 @@ const UploadTrackPage: React.FC = () => {
         genre: 'hip-hop',
         privacy: 'public',
     });
+
+    useEffect(() => {
+        if (user?.username) {
+            setFormData(prev => ({ ...prev, artist: user.username }));
+        }
+    }, [user]);
 
     const [audioFile, setAudioFile] = useState<File | null>(null);
     const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -146,7 +154,7 @@ const UploadTrackPage: React.FC = () => {
                         </div>
 
                         <div className="upload-form-group">
-                            <label htmlFor="trackLink">Ссылка на трек *</label>
+                            <label htmlFor="trackLink">Аудио-файл трека *</label>
                             <div className="track-link-wrapper">
                                 <input
                                     ref={audioInputRef}

@@ -141,28 +141,6 @@ export const extractColorsFromImage = (imageUrl: string): Promise<ExtractedColor
                 const finalLight = lightColor || analyzedColors[0];
                 const finalDark = darkColor || analyzedColors[analyzedColors.length - 1];
 
-                console.log('🎨 Extracted colors:', {
-                    vibrant: {
-                        rgb: `rgb(${finalVibrant.rgb.join(',')})`,
-                        hue: Math.round(finalVibrant.hue),
-                        saturation: Math.round(finalVibrant.saturation),
-                        brightness: Math.round(finalVibrant.brightness)
-                    },
-                    light: {
-                        rgb: `rgb(${finalLight.rgb.join(',')})`,
-                        hue: Math.round(finalLight.hue),
-                        saturation: Math.round(finalLight.saturation),
-                        brightness: Math.round(finalLight.brightness)
-                    },
-                    dark: {
-                        rgb: `rgb(${finalDark.rgb.join(',')})`,
-                        hue: Math.round(finalDark.hue),
-                        saturation: Math.round(finalDark.saturation),
-                        brightness: Math.round(finalDark.brightness)
-                    },
-                    hueDifference: Math.round(getHueDifference(finalVibrant.hue, finalLight.hue))
-                });
-
                 resolve({
                     vibrant: rgbToHex(finalVibrant.rgb),
                     light: rgbToHex(finalLight.rgb),
@@ -191,7 +169,6 @@ const rgbToHex = (rgb: number[]): string => {
 };
 
 export const updateCSSVariables = (colors: ExtractedColors) => {
-    console.log('🎨 Updating CSS variables:', colors);
     document.documentElement.style.setProperty('--accent-color', colors.vibrant);
     document.documentElement.style.setProperty('--accent-color-light', colors.light);
     document.documentElement.style.setProperty('--accent-color-dark', colors.dark);

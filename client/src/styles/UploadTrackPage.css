@@ -35,6 +35,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 
 .cover-upload-area:hover {
@@ -82,7 +83,7 @@
     background-color: rgba(255, 59, 48, 0.15);
     border: 1px solid rgba(255, 59, 48, 0.3);
     border-radius: 8px;
-    color: #ff6b6b;
+    color: var(--accent-color-dark);
     font-size: 14px;
     text-align: center;
 }
@@ -90,7 +91,7 @@
 .upload-form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-2x);
 }
 
 .upload-form-group label {
@@ -101,22 +102,23 @@
 
 .upload-form-group input,
 .upload-form-group select {
-    height: 48px;
-    padding: 0 16px;
-    background-color: var(--background-surface-color);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    color: var(--light-color);
+    color: var(--secondary-color);
     font-family: var(--font-primary);
     font-size: 14px;
     transition: all 0.2s ease;
+
+    height: 32px;
+    padding: 0 0 12px 0;
+    background-color: var(--dark-color);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    outline: none;
 }
 
 .upload-form-group input:focus,
 .upload-form-group select:focus {
     outline: none;
     border-color: var(--accent-color);
-    background-color: var(--background-highlight-color);
 }
 
 .upload-form-group input:disabled,
@@ -137,9 +139,9 @@
 
 /* Submit Button */
 .upload-submit-btn {
-    width: 100%;
+    width: 50%;
     height: 56px;
-    background: linear-gradient(135deg, #FF8A80, #FF6E9D);
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-color-light));
     color: var(--light-color);
     border: none;
     border-radius: 28px;
@@ -152,8 +154,8 @@
 }
 
 .upload-submit-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(255, 138, 128, 0.4);
+    transform: scale(1.02);
+    filter: brightness(130%);
 }
 
 .upload-submit-btn:disabled {
