@@ -1,7 +1,7 @@
 .upload-track-page {
     min-height: 100vh;
     padding-top: calc(var(--header-height) + 40px);
-    background-color: var(--dark-color);
+    background-color: var(--background-surface-color);
 }
 
 .upload-track-container {
@@ -27,7 +27,7 @@
     width: 100%;
     aspect-ratio: 1;
     background-color: var(--background-surface-color);
-    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border: 2px dashed var(--background-highlight-color);
     border-radius: 8px;
     cursor: pointer;
     overflow: hidden;
@@ -109,7 +109,7 @@
 
     height: 32px;
     padding: 0 0 12px 0;
-    background-color: var(--dark-color);
+    background-color: var(--background-surface-color);
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     outline: none;

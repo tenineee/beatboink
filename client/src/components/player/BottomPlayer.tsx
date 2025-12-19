@@ -1,4 +1,5 @@
 import {usePlayer} from "../../context/PlayerContext";
+import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { extractColorsFromImage, updateCSSVariables } from "../../utils/colorExtractor";
 import "./BottomPlayer.css";
@@ -20,6 +21,7 @@ const BottomPlayer: React.FC = () => {
         toggleFullscreen,
     } = usePlayer();
 
+    const navigate = useNavigate();
     const [showVolumePopover, setShowVolumePopover] = useState(false);
     const volumeRef = useRef<HTMLDivElement | null>(null);
 
@@ -65,6 +67,11 @@ const BottomPlayer: React.FC = () => {
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setVolume(Number(e.target.value));
+    };
+    const handleTrackClick = () => {
+        if (currentTrack?.id) {
+            navigate(`/track/${currentTrack.id}`);
+        }
     };
 
     const progressBackground = `linear-gradient(to right,
@@ -147,7 +154,7 @@ const BottomPlayer: React.FC = () => {
 
                     {/* RIGHT: Track + actions */}
                     <div className="bp__right">
-                        <button className="bp__track" type="button" onClick={toggleFullscreen} aria-label="Open fullscreen player">
+                        <button className="bp__track" type="button" onClick={handleTrackClick} aria-label="Open fullscreen player">
                 <span className="bp__cover">
                   {cover_url ? (
                       <img src={cover_url} alt={currentTrack.title} />

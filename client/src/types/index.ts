@@ -33,3 +33,12 @@ export interface Track {
     plays_count: number;
     created_at: string;
 }
+
+export interface Artist {
+    id: number;
+    name: string;
+    avatarUrl: string | null;
+    followers: number;
+    tracksCount: number;
+    isFollowing: boolean;
+}

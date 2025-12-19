@@ -1,16 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { usePlayer } from '../context/PlayerContext';
+import { TrackRow } from '../components/track/TrackRow';
 import { trackService } from '../services/api';
 import { type Track } from '../types';
 import '../styles/HomePage.css';
 
-
-import { usePlayer } from '../context/PlayerContext';
-import { TrackRow } from '../components/track/TrackRow';
-
 const HomePage: React.FC = () => {
     const { isAuthenticated } = useAuth();
-    const { playPlaylist } = usePlayer();
+    const { playPlaylist} = usePlayer();
     const [recentTracks, setRecentTracks] = useState<Track[]>([]);
     const [editorTracks, setEditorTracks] = useState<Track[]>([]);
     const [favoriteTracks, setFavoriteTracks] = useState<Track[]>([]);
@@ -63,73 +61,74 @@ const HomePage: React.FC = () => {
     return (
         <div className="home-page">
             {/* Прослушано недавно */}
-            <section className="track-section">
-                <div className="section-header">
-                    <h2 className="section-title">Прослушано недавно</h2>
-                    <div className="section-controls">
-                        <button
-                            className="scroll-btn"
-                            onClick={() => scroll(recentScrollRef, 'left')}
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
-                            </svg>
-                        </button>
-                        <button
-                            className="scroll-btn"
-                            onClick={() => scroll(recentScrollRef, 'right')}
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
-                            </svg>
-                        </button>
+            <div className="home-main">
+                <section className="track-section">
+                    <div className="section-header">
+                        <h2 className="section-title">Прослушано недавно</h2>
+                        <div className="section-controls">
+                            <button
+                                className="scroll-btn"
+                                onClick={() => scroll(recentScrollRef, 'left')}
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
+                                </svg>
+                            </button>
+                            <button
+                                className="scroll-btn"
+                                onClick={() => scroll(recentScrollRef, 'right')}
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div className="tracks-scroll" ref={recentScrollRef}>
-                    {recentTracks.map((track, index) => (
-                        <TrackRow
-                            key={track.id}
-                            track={track}
-                            onClick={() => handleTrackClick(recentTracks, index)}
-                        />
-                    ))}
-                </div>
-            </section>
-
-            {/* Выбор редакции */}
-            <section className="track-section">
-                <div className="section-header">
-                    <h2 className="section-title">Выбор редакции</h2>
-                    <div className="section-controls">
-                        <button
-                            className="scroll-btn"
-                            onClick={() => scroll(editorScrollRef, 'left')}
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
-                            </svg>
-                        </button>
-                        <button
-                            className="scroll-btn"
-                            onClick={() => scroll(editorScrollRef, 'right')}
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
-                            </svg>
-                        </button>
+                    <div className="tracks-scroll" ref={recentScrollRef}>
+                        {recentTracks.map((track, index) => (
+                            <TrackRow
+                                key={track.id}
+                                track={track}
+                                onClick={() => handleTrackClick(recentTracks, index)}
+                            />
+                        ))}
                     </div>
-                </div>
-                <div className="tracks-scroll" ref={editorScrollRef}>
-                    {editorTracks.map((track, index) => (
-                        <TrackRow
-                            key={track.id}
-                            track={track}
-                            onClick={() => handleTrackClick(editorTracks, index)}
-                        />
-                    ))}
-                </div>
-            </section>
+                </section>
 
+                {/* Выбор редакции */}
+                <section className="track-section">
+                    <div className="section-header">
+                        <h2 className="section-title">Выбор редакции</h2>
+                        <div className="section-controls">
+                            <button
+                                className="scroll-btn"
+                                onClick={() => scroll(editorScrollRef, 'left')}
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" fill="currentColor" />
+                                </svg>
+                            </button>
+                            <button
+                                className="scroll-btn"
+                                onClick={() => scroll(editorScrollRef, 'right')}
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M8.59 16.59L10 18L16 12L10 6L8.59 7.41L13.17 12L8.59 16.59Z" fill="currentColor" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="tracks-scroll" ref={editorScrollRef}>
+                        {editorTracks.map((track, index) => (
+                            <TrackRow
+                                key={track.id}
+                                track={track}
+                                onClick={() => handleTrackClick(editorTracks, index)}
+                            />
+                        ))}
+                    </div>
+                </section>
+            </div>
             {/* Боковая панель с избранным и историей (только для авторизованных) */}
             {isAuthenticated && (
                 <aside className="sidebar-sections">
@@ -137,12 +136,8 @@ const HomePage: React.FC = () => {
                     <section className="sidebar-section">
                         <h3 className="sidebar-title">Любимые треки</h3>
                         <div className="sidebar-tracks">
-                            {favoriteTracks.map((track, index) => (
-                                <div
-                                    key={track.id}
-                                    className="sidebar-track"
-                                    onClick={() => handleTrackClick(favoriteTracks, index)}
-                                >
+                            {favoriteTracks.slice(0, 5).map((track, index) => (
+                                <div key={track.id} className="sidebar-track" onClick={() => handleTrackClick(favoriteTracks, index)}>
                                     <div className="sidebar-track-cover">
                                         {track.cover_url ? (
                                             <img
@@ -189,7 +184,7 @@ const HomePage: React.FC = () => {
                                     </div>
                                     <div className="sidebar-artist-info">
                                         <div className="sidebar-artist-name">{track.artist}</div>
-                                        <div className="sidebar-artist-meta">🎵 Артист</div>
+                                        <div className="sidebar-track-artist">Артист</div>
                                     </div>
                                 </div>
                             ))}
@@ -200,12 +195,8 @@ const HomePage: React.FC = () => {
                     <section className="sidebar-section">
                         <h3 className="sidebar-title">История прослушиваний</h3>
                         <div className="sidebar-tracks">
-                            {historyTracks.map((track, index) => (
-                                <div
-                                    key={track.id}
-                                    className="sidebar-track"
-                                    onClick={() => handleTrackClick(historyTracks, index)}
-                                >
+                            {historyTracks.slice(0, 5).map((track, index) => (
+                                <div key={track.id} className="sidebar-track" onClick={() => handleTrackClick(historyTracks, index)}>
                                     <div className="sidebar-track-cover">
                                         {track.cover_url ? (
                                             <img

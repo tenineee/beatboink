@@ -1,7 +1,7 @@
 import { usePlayer } from '../../context/PlayerContext';
 import { useState, useRef, useEffect } from 'react';
 import { extractColorsFromImage, updateCSSVariables } from '../../utils/colorExtractor';
-import '../../styles/TrackPlayerPage.css';
+import './FullscreenPlayer.css';
 
 const FullscreenPlayer: React.FC = () => {
     const {

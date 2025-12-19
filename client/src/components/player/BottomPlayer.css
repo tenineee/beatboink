@@ -183,11 +183,10 @@
 
     display: grid;
     grid-template-columns: 48px minmax(0, 200px);
-    gap: 12px;
     align-items: center;
 
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: 4px;
     transition: background-color 0.12s ease;
     min-width: 0;
 }
@@ -374,6 +373,9 @@
 }
 
 @media (max-width: 768px) {
+    .bp__track {
+        visibility: hidden;
+    }
     .bp__row {
         grid-template-columns: 1fr auto;
         gap: 16px;
@@ -394,20 +396,3 @@
     }
 }
 
-@media (max-width: 580px) {
-    .bottom-player {
-        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-    }
-
-    .bp__row {
-        gap: 12px;
-    }
-
-    .bp__meta {
-        max-width: 120px;
-    }
-
-    .bp__actions .bp__volume {
-        display: none; /* hide volume on small screens */
-    }
-}

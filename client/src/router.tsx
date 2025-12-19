@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UploadTrackPage from './pages/UploadTrackPage';
+import TrackPage from "./pages/TrackPage";
 
 export const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
             {
                 path: 'upload',
                 element: <UploadTrackPage />,
+            },
+            {
+                path: 'track/:trackId',
+                element: <TrackPage />,
             },
         ],
     },

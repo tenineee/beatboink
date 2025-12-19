@@ -19,6 +19,7 @@ interface PlayerContextType {
     setVolume: (volume: number) => void;
     toggleRepeat: () => void;
     toggleFullscreen: () => void;
+    setTrack: (track: Track) => void;
     audioRef: React.RefObject<HTMLAudioElement | null>;
 }
 
@@ -160,6 +161,11 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const toggleRepeat = () => setIsRepeat(!isRepeat);
     const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
 
+    const setTrack = (track: Track) => {
+        setCurrentTrack(track);
+        setIsPlaying(true);
+    };
+
     // Обработчики событий audio
     const handleLoadedMetadata = () => {
         if (audioRef.current) setDuration(audioRef.current.duration);
@@ -203,6 +209,7 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 setVolume,
                 toggleRepeat,
                 toggleFullscreen,
+                setTrack,
                 audioRef,
             }}
         >
