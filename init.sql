@@ -15,14 +15,21 @@ CREATE TABLE users (
 -- 2. Треки
 CREATE TABLE tracks (
                         id SERIAL PRIMARY KEY,
-                        author_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                         title VARCHAR(255) NOT NULL,
-                        audio_url VARCHAR(255) NOT NULL, -- Путь к файлу
-                        image_url VARCHAR(255),          -- Обложка
-                        duration INTEGER,                -- В секундах
+                        artist VARCHAR(255) NOT NULL,
+                        album VARCHAR(255),
+                        genre VARCHAR(100),
+                        duration INTEGER NOT NULL,
+                        audio_url VARCHAR(500) NOT NULL,
+                        cover_url VARCHAR(500),
+                        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                         plays_count INTEGER DEFAULT 0,
-                        created_at TIMESTAMP DEFAULT NOW()
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_tracks_user_id ON tracks(user_id);
+CREATE INDEX idx_tracks_genre ON tracks(genre);
+
 
 -- 3. Плейлисты (опционально для старта, но пригодится)
 CREATE TABLE playlists (

@@ -1,0 +1,398 @@
+/* Bottom player is fully namespaced via bp__* to avoid collisions with TrackPlayerPage.css */
+.bottom-player {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+
+    /*padding: 12px 20px calc(12px + env(safe-area-inset-bottom));*/
+    background: var(--background-highlight-color);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    display: flex;
+    justify-content: center;
+    font-family: inherit;
+}
+
+.bottom-player_container {
+    width: 1240px;
+}
+
+.bottom-player * {
+    box-sizing: border-box;
+}
+
+/* Main row: controls left, progress center, track+actions right */
+.bp__row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    min-height: 45px;
+}
+
+/* LEFT: Controls */
+.bp__controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+}
+
+.bp__iconBtn {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--light-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+    flex-shrink: 0;
+}
+
+.bp__iconBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: scale(1.05);
+}
+
+.bp__mutedBtn {
+    color: var(--secondary-color);
+}
+
+.bp__iconBtn.isActive {
+    color: var(--light-color);
+}
+
+.bp__playBtn {
+    width: 31px;
+    height: 31px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+
+    color: rgba(0, 0, 0, 0.92);
+    background: var(--accent-color);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.bp__playBtn:hover {
+    transform: scale(1.05);
+    filter: saturate(1.05);
+}
+
+/* CENTER: Progress bar with time */
+.bp__progressRow {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.bp__time {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--light-color);
+    user-select: none;
+}
+
+.bp__time:last-child {
+    text-align: right;
+}
+
+.bp__progress {
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* WebKit track/thumb */
+.bp__progress::-webkit-slider-runnable-track {
+    height: 5px;
+    border-radius: 999px;
+    background: transparent; /* gradient is set on the input itself */
+}
+
+.bp__progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-color-light);
+    margin-top: -3.5px;
+    transition: transform 0.12s ease;
+}
+
+.bp__progress:hover::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+
+/* Firefox track/thumb */
+.bp__progress::-moz-range-track {
+    height: 5px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.bp__progress::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-color-light);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+    transition: transform 0.12s ease;
+}
+
+.bp__progress:hover::-moz-range-thumb {
+    transform: scale(1.15);
+}
+
+/* RIGHT: Track + actions */
+.bp__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 0;
+}
+
+.bp__track {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    display: grid;
+    grid-template-columns: 48px minmax(0, 200px);
+    align-items: center;
+
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: background-color 0.12s ease;
+    min-width: 0;
+}
+
+.bp__track:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bp__cover {
+    width: 32px;
+    height: 32px;
+    border-radius: 1px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bp__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bp__coverPlaceholder {
+    color: rgba(255, 255, 255, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bp__meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+}
+
+.bp__artist {
+    font-size: 12px;
+    line-height: 1.1;
+    color: var(--secondary-color);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bp__title {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--light-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Actions */
+.bp__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.bp__volume {
+    color: var(--light-color);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.bp__volumePopover {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 12px);
+
+    background: var(--background-highlight-color);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 190px;
+    animation: slideUpFade 0.15s ease;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bp__volumeRange {
+    width: 120px;
+    height: 2px;
+    border-radius: 999px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.bp__volumeRange::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.bp__volumeRange::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-color-light);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+    margin-top: -4px;
+    transition: transform 0.12s ease;
+}
+
+.bp__volumeRange:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+}
+
+.bp__volumeRange::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.bp__volumeRange::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-color-light);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+    transition: transform 0.12s ease;
+}
+
+.bp__volumeRange:hover::-moz-range-thumb {
+    transform: scale(1.1);
+}
+
+.bp__volumeValue {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--light-color);
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .bp__progressRow {
+        grid-template-columns: 42px 1fr 42px;
+    }
+
+    .bp__track {
+        grid-template-columns: 44px minmax(0, 160px);
+    }
+
+    .bp__cover {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bp__track {
+        visibility: hidden;
+    }
+    .bp__row {
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+    }
+
+    .bp__controls {
+        grid-column: 1 / -1;
+        justify-content: center;
+        order: 2;
+    }
+
+    .bp__progressRow {
+        order: 1;
+    }
+
+    .bp__right {
+        order: 3;
+    }
+}
+

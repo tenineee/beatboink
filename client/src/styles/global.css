@@ -1,26 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+@property --accent-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #FDA026;
+}
+
+@property --accent-color-light {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #FFB84D;
+}
+
+@property --accent-color-dark {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #FFB84D;
+}
+
 :root {
-    /* Colors */
     --accent-color: #FDA026;
-    --accent-color2: #FFB84D;
+    --accent-color-light: #FFB84D;
+    --accent-color-dark: #FFB84D;
     --dark-color: #1a1a1a;
     --light-color: #ffffff;
     --secondary-color: #999;
     --background-surface-color: #121212;
     --background-highlight-color: #303030;
 
-    /* Spacing */
     --header-height: 46px;
     --spacing-1x: 8px;
     --spacing-2x: 16px;
     --spacing-3x: 24px;
+    --spacing-3x: 32px;
 
-    /* Typography */
     --font-primary: 'Montserrat', sans-serif;
     --font-size-small: 13px;
     --font-size-base: 14px;
+    --font-size-medium: 24px;
+
+    transition: --accent-color 0.2s ease-in-out,
+                --accent-color-light 0.2s ease-in-out,
+                --accent-color-dark 0.2s ease-in-out;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 * {
     box-sizing: border-box;
@@ -33,7 +55,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--dark-color);
+    background-color: var(--background-surface-color);
     color: var(--light-color);
     font-family: var(--font-primary);
     font-size: var(--font-size-base);

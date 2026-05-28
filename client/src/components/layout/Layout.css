@@ -1,0 +1,11 @@
+.app-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding-bottom: 96px; /* Отступ для bottom player */
+    padding-top: var(--header-height, 64px);
+}

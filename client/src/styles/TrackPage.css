@@ -1,0 +1,434 @@
+.track-page {
+    min-height: 100vh;
+    background: var(--background-surface-color);
+    padding-bottom: 100px;
+}
+
+/* Header Banner */
+.track-header {
+    background: var(--background-surface-color);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    height: 240px;
+    justify-content: center;
+}
+
+.track-header-container {
+    width: 100%;
+    max-width: 1240px;
+    background: linear-gradient(135deg,
+    var(--accent-color, #ff3b7a) 0%,
+    var(--accent-color-light, #ff7aa7) 100%);
+    padding: 20px 40px 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.track-header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+    "play info published cover"
+    "play meta published cover";
+    gap: 24px;
+    column-gap: 32px;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+}
+
+
+.track-play-btn {
+    grid-area: play;
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+    border: none;
+    background: var(--light-color);
+    color: var(--background-surface-color);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: start;
+    margin-top: var(--spacing-1x);
+
+    transition: transform 0.2s ease, background-color 0.2s;
+    z-index: 10;
+}
+
+.track-play-btn:hover {
+    transform: scale(1.05);
+    background: #ffffff;
+}
+
+.track-info {
+    /* чтобы плашки всегда были влево и не растягивались */
+    min-width: 0;
+}
+
+/* Темная подкладка для текста */
+.track-text-box {
+    /* убираем общую подложку и делаем контейнер-стек */
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+}
+
+/* общая “плашка” */
+.track-title,
+.track-artist-link {
+    font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+
+    background: var(--background-surface-color);
+
+    padding-block: 0.25em;
+    padding-inline: 0.7em;
+
+    /* чтобы длинные названия/артист не ломали сетку */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-title {
+    color: white;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.track-artist-link {
+    margin: 0;
+    border: none;
+    cursor: pointer;
+
+    color: var(--secondary-color);
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    justify-content: left;
+    text-align: center;
+}
+
+.track-artist-link:hover {
+    opacity: 0.9;
+    text-decoration: underline;
+}
+
+.track-meta {
+    grid-area: meta;
+    padding-top: var(--spacing-1x);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1x);
+    font-size: 12px;
+    color: var(--light-color);
+}
+
+.track-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.track-published {
+    grid-area: published;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    white-space: nowrap;
+    align-self: start;
+    padding-top: 4px;
+}
+
+.track-cover {
+    grid-area: cover;
+    width: 200px;
+    height: 200px;
+    border-radius: 1px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    grid-row: 1 / 3;
+}
+
+.track-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Main Content */
+.track-content {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+/* Sidebar */
+.track-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--spacing-3x);
+    gap: 13px;
+    position: sticky;
+    top: 40px;
+}
+
+.artist-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.artist-avatar:hover {
+    transform: scale(1.02);
+}
+
+.artist-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.artist-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    background: linear-gradient(135deg,
+    var(--background-highlight-color, #1a1a1a),
+    var(--background-surface-color, #141414));
+}
+
+.artist-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.stat-item svg {
+    opacity: 0.7;
+}
+
+
+.track-actions-container {
+    width: 100%;
+    max-width: 1240px;
+    display: flex;
+    gap: var(--spacing-1x);
+
+}
+.track-actions {
+    padding: var(--spacing-2x);
+    justify-items: center;
+}
+
+.action-btn {
+    width: 30px;
+    height: 25px;
+    border-radius: 3px;
+    border: none;
+    background: var(--background-highlight-color);
+    color: var(--light-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.action-btn.active {
+    color: var(--accent-color, #ff3b7a);
+    border-color: var(--accent-color, #ff3b7a);
+}
+
+.follow-btn {
+    width: 100%;
+    padding: 10px 40px;
+    border-radius: 3px;
+    border: none;
+    background: var(--light-color);
+    color: var(--background-surface-color);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.follow-btn:hover {
+    background: var(--secondary-color);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.follow-btn.following {
+    background: var(--accent-color, #ff3b7a);
+    border-color: var(--accent-color, #ff3b7a);
+}
+
+.follow-btn.following:hover {
+    opacity: 0.9;
+}
+
+/* Comments Section */
+.track-comments {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    min-height: 600px;
+    padding: 40px;
+}
+
+.comments-placeholder {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    padding: 100px 20px;
+}
+
+/* Loading & Error States */
+.track-page-loading,
+.track-page-error {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .track-header-container {
+        padding: 40px 24px 32px;
+    }
+
+    .track-title {
+        font-size: 28px;
+    }
+
+    .track-artist-link {
+        font-size: 16px;
+    }
+
+    .track-cover {
+        width: 200px;
+        height: 200px;
+    }
+
+    .track-content {
+        padding: 32px 24px;
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .track-header-content {
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+      "published published"
+      "play cover"
+      "info info"
+      "meta meta";
+        gap: 16px;
+    }
+
+    .track-play-btn {
+        width: 60px;
+        height: 60px;
+    }
+
+    .track-play-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .track-cover {
+        width: 120px;
+        height: 120px;
+        grid-row: auto;
+    }
+
+    .track-text-box {
+        padding: 12px 16px;
+    }
+
+    .track-title {
+        font-size: 24px;
+    }
+
+    .track-artist-link {
+        font-size: 16px;
+    }
+
+    .track-published {
+        padding-top: 0;
+        justify-self: start;
+    }
+
+    .track-content {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 24px 16px;
+    }
+
+    .track-sidebar {
+        position: static;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .artist-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .track-comments {
+        padding: 24px;
+    }
+}

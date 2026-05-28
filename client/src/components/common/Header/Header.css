@@ -8,17 +8,16 @@
     font-family: var(--font-primary);
     font-weight: 500;
     font-size: var(--font-size-small);
-    background-color: var(--dark-color);
+    background-color: var(--background-surface-color);
 }
 
 .header_container {
     max-width: 1240px;
-    padding: 0 16px;
     margin: 0 auto;
     height: 100%;
     display: flex;
     align-items: center;
-    background-color: var(--dark-color);
+    background-color: var(--background-surface-color);
     color: var(--light-color);
 }
 
@@ -31,9 +30,11 @@
 
 .header__logo {
     display: flex;
+    margin-top:-7px;
     align-items: center;
     text-decoration: none;
     color: var(--accent-color);
+    transition: color 1.3s ease-in-out;
 }
 
 .header__logo svg {
